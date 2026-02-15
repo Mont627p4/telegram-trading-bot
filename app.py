@@ -1,29 +1,25 @@
 from trading_bot import main
 import asyncio
-from flask import Flask
 import threading
 import logging
+from flask import Flask
 
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
-@app.route('/')
-def home():
-    return "Bot is running 24/7 on Render!"
-
-def run_bot():
-    """Run the bot in a new event loop"""
-    # Create new event loop for this thread
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    
-    # Run the bot
+def start_bot():
+    """Start the bot with its own event loop"""
+    asyncio.set_event_loop(asyncio.new_event_loop())
+    loop = asyncio.get_event_loop()
     loop.run_until_complete(main())
 
+@app.route('/')
+def home():
+    return "Bot is alive!"
+
+# Start bot when app starts
+thread = threading.Thread(target=start_bot, daemon=True)
+thread.start()
+
 if __name__ == "__main__":
-    # Start bot in background thread
-    thread = threading.Thread(target=run_bot, daemon=True)
-    thread.start()
-    
-    # Run web server
     app.run(host='0.0.0.0', port=10000)
