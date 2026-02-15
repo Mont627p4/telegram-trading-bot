@@ -6,7 +6,6 @@ import math
 import asyncio
 import logging
 import os
-import time
 
 # ========== YOUR CREDENTIALS - REPLACE THESE ==========
 API_ID = 38099889  # <-- REPLACE with your API_ID
@@ -128,12 +127,6 @@ async def handle_signal(event):
     except Exception as e:
         logger.error(f"Error: {e}")
 
-async def keep_alive():
-    """Send periodic pings to keep the bot alive"""
-    while True:
-        await asyncio.sleep(60)  # Ping every minute
-        logger.debug("⏰ Keep-alive ping")
-
 async def main():
     logger.info("🚀 Starting bot...")
     await telegram_client.start()
@@ -149,10 +142,6 @@ async def main():
         await handle_signal(event)
     
     logger.info(f"👂 Listening for signals from: {channel.title}")
-    
-    # Start keep-alive task
-    asyncio.create_task(keep_alive())
-    
     await telegram_client.run_until_disconnected()
 
 if __name__ == '__main__':
